@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChatApp</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="app.js"></script>
+
+</head>
+
+<body>
+  <div class="page nexus6">
+    <div class="phone">
+      <div class="wa-container">
+        <div class="status-bar">
+          <div class="time">
+            2:15 PM
+          </div>
+          <div class="battery">
+            <i class="zmdi zmdi-battery"></i>
+          </div>
+          <div class="network">
+            <i class="zmdi zmdi-network"></i>
+          </div>
+          <div class="wifi">
+            <i class="zmdi zmdi-wifi-alt-2"></i>
+          </div>
+          <div class="star">
+            <i class="zmdi zmdi-star"></i>
+          </div>
+        </div>
+        <div class="wrapperchat">
+          <div class="chat-root">
+            <div class="user-bar">
+              <div class="back">
+                <i class="zmdi zmdi-arrow-left"></i>
+              </div>
+              <!-- user info start -->
+              <div class="user">
+                <img src="mypic.jpg" alt="user" />
+              </div>
+              <div class="user-name">
+                <b>Salman Ghouri</b>
+                <span></span>
+              </div>
+              <!-- user info end -->
+              <div class="actions more">
+                <i class="zmdi zmdi-more-vert"></i>
+              </div>
+              <div class="actions attachment">
+                <i class="zmdi zmdi-attachment-alt"></i>
+              </div>
+              <div class="actions">
+                <i class="zmdi zmdi-phone"></i>
+              </div>
+            </div>
+            <div class="chat-window">
+              <!-- conversation start -->
+              <div class="conversation">
+
+                <div class="balloon you">
+                  Hope i didn't wake you guys up before!
+                  <span class="data">2:11 PM</span>
+                </div>
+                <div class="balloon him">
+                  You didn't! we're laying in bed. dad's playing with my anus.
+                  <span class="data blue">2:11 PM</span>
+                </div>
+                <div class="balloon you" >
+                  <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-app.js"></script>
+                  <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-database.js"></script>
+                  <!-- TODO: Add SDKs for Firebase products that you want to use
+                       https://firebase.google.com/docs/web/setup#available-libraries -->
+                  <script src="https://www.gstatic.com/firebasejs/7.20.0/firebase-analytics.js"></script>
+                  <script>
+                    // Your web app's Firebase configuration
+                    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+                    var firebaseConfig = {
+                      apiKey: "AIzaSyDyuRbIguDgsCVcTtr2dFrzGPce0B5qgQw",
+                      authDomain: "chatapp-57273.firebaseapp.com",
+                      databaseURL: "https://chatapp-57273.firebaseio.com",
+                      projectId: "chatapp-57273",
+                      storageBucket: "chatapp-57273.appspot.com",
+                      messagingSenderId: "14875006879",
+                      appId: "1:14875006879:web:d51e9c7eb7c90ec4ea0faa",
+                      measurementId: "G-EVLTBZ5Y5T"
+                    };
+                    // Initialize Firebase
+                    firebase.initializeApp(firebaseConfig);
+                    var myName = prompt("Enter your name: ");
+
+                    function sendMessge() {
+                      // get message
+                      var message = document.getElementById("message").value;
+
+                      // save in database
+                      firebase.database().ref("messages").push().set({
+                        "sender": myName,
+                        "message": message
+                      });
+
+                      // prevent form from submitting
+                      return false;
+                    }
+
+                    // listen for incoming messages
+                    firebase.database().ref("messages").on("child_added", function (snapshot) {
+                      var html = "";
+                      // give each message a unique ID
+                      html += "<li id='message-" + snapshot.key + "'>";
+                      // show delete button if message is sent by me
+                      if (snapshot.val().sender == myName) {
+                        html += "<button data-id='" + snapshot.key + "' onclick='deleteMessage(this);'>";
+                        html += "Delete";
+                        html += "</button>";
+                      }
+                      html += snapshot.val().sender + ": " + snapshot.val().message;
+                      html += "</li>";
+
+                      document.getElementById("messages").innerHTML += html;
+                    });
+
+
+                    function deleteMessage(self) {
+                      // get message ID
+                      var messageId = self.getAttribute("data-id");
+
+                      // delete message
+                      firebase.database().ref("messages").child(messageId).remove();
+                    }
+
+                    // attach listener for delete message
+                    firebase.database().ref("messages").on("child_removed", function (snapshot) {
+                      // remove message node
+                      document.getElementById("message-" + snapshot.key).innerHTML = "This message has been removed";
+                    });
+                    firebase.analytics();
+
+
+                  </script>
+
+                  <!--Create a list-->
+                  <div>
+                    <ul id="messages"></ul>
+                    <span class="data blue">2:15 PM</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- conversation end -->
+              <div class="textarea">
+                <div class="emoticons"></div>
+                <textarea class="message" name="message" placeholder="Type a message" input id="message"
+                  placeholder="Enter your message" autocomplete="off"></textarea>
+                <form onsubmit="return sendMessge(); ">
+                  <input text="" id="subid" type="submit">
+                </form>
+              </div>
+
+            </div>
+          </div>
+        </div>
+        <div class="bottom-bar">
+          <div class="triangle">
+            <i class="zmdi zmdi-triangle-up"></i>
+          </div>
+          <div>
+            <i class="zmdi zmdi-circle-o"></i>
+          </div>
+          <div>
+            <i class="zmdi zmdi-square-o"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
